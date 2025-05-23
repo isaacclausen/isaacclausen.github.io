@@ -6,21 +6,34 @@
       body {
         background-color: #EBE3CC;
         font-family: sans-serif;
-        text-align: center;
-        padding: 2rem;
         margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      .banner {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        display: block;
       }
       .logo {
         max-width: 300px;
         width: 80%;
         height: auto;
-        margin-bottom: 2rem;
+        margin: 2rem auto;
+        display: block;
+      }
+      .content {
+        padding: 1rem 2rem;
       }
     </style>
   </head>
   <body>
+    <img src="Exterior.png" alt="National Park Banner" class="banner" />
     <img src="Escape Inside Logo.svg" alt="Escape Inside Logo" class="logo" />
-    <h1>Hello, world!</h1>
-    <p>Welcome to Escape Inside.</p>
+    <div class="content">
+      <h1>Hello, world!</h1>
+      <p>Welcome to Escape Inside.</p>
+    </div>
   </body>
 </html>
