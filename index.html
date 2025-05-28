@@ -8,14 +8,59 @@
         font-family: sans-serif;
         margin: 0;
         padding: 0;
-        text-align: center;
       }
-      .banner {
+
+      /* 🖼 Banner container with relative positioning */
+      .banner-container {
+        position: relative;
         width: 100%;
         max-height: 300px;
+        overflow: hidden;
+      }
+
+      .banner {
+        width: 100%;
+        height: 300px;
         object-fit: cover;
+        object-position: center 60%;
         display: block;
       }
+
+      /* 🔝 Overlay nav on top of the banner */
+      .overlay-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .overlay-nav img {
+        height: 50px;
+        margin-right: 1rem; /* Add spacing between the logo and nav links */
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        
+      }
+
+      .nav-links a {
+        color: #EBE3CC;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      }
+
+      .nav-links a:hover {
+        text-decoration: underline;
+      }
+
+      /* 🧩 Main logo and content */
       .logo {
         max-width: 300px;
         width: 80%;
@@ -23,17 +68,135 @@
         margin: 2rem auto;
         display: block;
       }
+
       .content {
+        text-align: center;
         padding: 1rem 2rem;
       }
+
+      .events-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.events-table th, .events-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.events-table th {
+  background-color: #f7f4ec;
+  font-weight: bold;
+}
+
+.events-table tbody tr:hover {
+  background-color: #f0ece1;
+}
+
+.book-link {
+  background-color: #2b2b2b;
+  color: #EBE3CC;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.book-link:hover {
+  background-color: #444;
+}
+
     </style>
   </head>
   <body>
-    <img src="Exterior.png" alt="National Park Banner" class="banner" />
+    <!-- 🖼️ Banner with overlay -->
+    <div class="banner-container">
+      <img src="Exterior.png" alt="Escape Room Exterior" class="banner" />
+      <div class="overlay-nav">
+        <img src="Escape Inside Logo Light No Tagline.svg" alt="Escape Inside Logo Light" />
+        <div class="nav-links">
+          <a href="#">Book Now</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🎯 Main Content -->
     <img src="Escape Inside Logo.svg" alt="Escape Inside Logo" class="logo" />
     <div class="content">
-      <h1>Hello, world!</h1>
-      <p>Welcome to Escape Inside.</p>
+      <h1>Let the adventure come to you!</h1>
+      <p>Escape inside is a work in progress mobile escape room with the goal of bringing escape room adventures to your event. Check here for upcoming events that we will be attending, or send us a message if you are interested in having Escape Inside at your next gathering!</p>
     </div>
+    <div class="content events-section">
+      <h2>Upcoming Public Events</h2>
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Event Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="events-body">
+          <!-- Events will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+    
+    
+    
+    <script>
+      const calendarId = '9ccddeec24fa50c0880827217c1897b6d15b492d8d1519973aa7db19b0096992@group.calendar.google.com';
+      const apiKey = 'AIzaSyDN0bgkpa5j8AXJ556Dmasfj6-Y-wW25qU';
+    
+      fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${new Date().toISOString()}`)
+    .then(res => res.json())
+    .then(data => {
+      const events = data.items || [];
+      const section = document.querySelector('.events-section');
+      const tableBody = document.getElementById('events-body');
+
+      if (events.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      events.forEach(event => {
+        const row = document.createElement('tr');
+        const rawDate = new Date(event.start.dateTime || event.start.date);
+        const date = rawDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const location = event.location || 'TBD';
+        const name = event.summary || 'Untitled Event';
+        const link = event.htmlLink || '#';
+
+        row.innerHTML = `
+          <td>${date}</td>
+          <td>${location}</td>
+          <td>${name}</td>
+          <td><a href="${link}" target="_blank" class="book-link">Book Now</a></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Error loading calendar events:', err);
+      document.querySelector('.events-section').style.display = 'none';
+    });
+</script>
+    
   </body>
 </html>
