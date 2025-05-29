@@ -224,47 +224,47 @@
     
     
     <script>
-      const calendarId = '9ccddeec24fa50c0880827217c1897b6d15b492d8d1519973aa7db19b0096992@group.calendar.google.com';
-      const apiKey = 'AIzaSyDN0bgkpa5j8AXJ556Dmasfj6-Y-wW25qU';
+
     
-      fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${new Date().toISOString()}`)
-    .then(res => res.json())
-    .then(data => {
-      const events = data.items || [];
-      const section = document.querySelector('.events-section');
-      const tableBody = document.getElementById('events-body');
+fetch('https://escape-calendar-proxy.isaacclausen.workers.dev')
+  .then(res => res.json())
+  .then(data => {
+    const events = data.items || [];
+    const section = document.querySelector('.events-section');
+    const tableBody = document.getElementById('events-body');
 
-      if (events.length === 0) {
-        section.style.display = 'none';
-        return;
-      }
+    if (events.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
 
-      events.forEach(event => {
-        const row = document.createElement('tr');
-        const rawDate = new Date(event.start.dateTime || event.start.date);
-        const date = rawDate.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-
-        const location = event.location || 'TBD';
-        const name = event.summary || 'Untitled Event';
-        const link = event.htmlLink || '#';
-
-        row.innerHTML = `
-          <td>${date}</td>
-          <td>${location}</td>
-          <td>${name}</td>
-          <td><a href="${link}" target="_blank" class="book-link">Book Now</a></td>
-        `;
-        tableBody.appendChild(row);
+    events.forEach(event => {
+      const row = document.createElement('tr');
+      const rawDate = new Date(event.start.dateTime || event.start.date);
+      const date = rawDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
-    })
-    .catch(err => {
-      console.error('Error loading calendar events:', err);
-      document.querySelector('.events-section').style.display = 'none';
+
+      const location = event.location || 'TBD';
+      const name = event.summary || 'Untitled Event';
+      const link = event.htmlLink || '#';
+
+      row.innerHTML = `
+        <td>${date}</td>
+        <td>${location}</td>
+        <td>${name}</td>
+        <td><a href="${link}" target="_blank" class="book-link">Book Now</a></td>
+      `;
+      tableBody.appendChild(row);
     });
+  })
+  .catch(err => {
+    console.error('Error loading calendar events:', err);
+    document.querySelector('.events-section').style.display = 'none';
+  });
+
 </script>
     
   </body>
