@@ -248,13 +248,13 @@
 
         const location = event.location || 'TBD';
         const name = event.summary || 'Untitled Event';
-        const link = event.htmlLink || '#';
+        const eventId = encodeURIComponent(event.id);
 
         row.innerHTML = `
           <td>${date}</td>
           <td>${location}</td>
           <td>${name}</td>
-          <td><a href="${link}" target="_blank" class="book-link">Book Now</a></td>
+          <td><a href="booking.html?event=${eventId}" class="book-link">Book Now</a></td>
         `;
         tableBody.appendChild(row);
       });

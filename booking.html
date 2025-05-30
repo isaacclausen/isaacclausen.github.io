@@ -122,6 +122,17 @@
             white-space: nowrap; /* Prevent wrapping */
         }
 
+        .slots-unavailable {
+            background: #e53935;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
         .time-slot-selection {
             display: none;
             animation: fadeIn 0.5s ease-in;
@@ -231,6 +242,20 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #2b2b2b;
+        }
+
+        .name-fields {
+            display: flex;
+            gap: 1rem;
+        }
+        .name-fields > div {
+            flex: 1 1 0;
+        }
+        @media (max-width: 600px) {
+            .name-fields {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
 
         .people-selector {
@@ -370,6 +395,82 @@
             background: #4CAF50;
         }
 
+        .confirmation-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(43,43,43,0.85);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s;
+        }
+
+        .confirmation-message {
+            position: relative;
+            z-index: 1001;
+            max-width: 95vw;
+            min-width: 320px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            padding: 2.5rem 2rem 2rem 2rem;
+            text-align: center;
+            animation: popIn 0.4s;
+        }
+
+        .confirmation-message h2 {
+            color: #2b2b2b;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .confirmation-message p {
+            color: #444;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirmation-message .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            background: linear-gradient(45deg, #2b2b2b, #444);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .confirmation-message .back-link:hover {
+            background: linear-gradient(45deg, #444, #2b2b2b);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        #confirmation-details {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 1.2rem 1rem;
+            margin: 1.5rem auto 0 auto;
+            text-align: left;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        #confirmation-details p {
+            margin: 0.3em 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95);}
+            to { opacity: 1; transform: scale(1);}
+        }
+
         @media (max-width: 600px) {
             .event-info {
                 flex-direction: column;
@@ -427,6 +528,13 @@
 
             <div class="event-selection" id="event-selection" style="display: none;">
                 <h2>Select Your Event</h2>
+
+                <div id="change-event-bar" style="display:none; margin-bottom:1rem; text-align:right;">
+                    <button id="change-event-btn" style="background:#eee; border:none; color:#2b2b2b; font-weight:bold; padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer;">
+                        ← Change Event
+                    </button>
+                </div>
+
                 <div id="events-container">
                     <!-- Events will be loaded here -->
                 </div>
@@ -462,9 +570,15 @@
                         <input type="hidden" id="people-count" name="people-count" value="2">
                     </div>
 
-                    <div class="form-group">
-                        <label for="contact-name">Contact Name *</label>
-                        <input type="text" id="contact-name" name="contact-name" required>
+                    <div class="form-group name-fields">
+                        <div>
+                            <label for="contact-first-name">Contact Person First Name *</label>
+                            <input type="text" id="contact-first-name" name="contact-first-name" required>
+                        </div>
+                        <div>
+                            <label for="contact-last-name">Last Name *</label>
+                            <input type="text" id="contact-last-name" name="contact-last-name" required>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -490,6 +604,19 @@
                 <h2>No Events Available</h2>
                 <p>We don't have any public events scheduled at the moment. Please check back soon or contact us about private bookings!</p>
             </div>
+        </div>
+    </div>
+
+    <div id="confirmation-overlay" class="confirmation-overlay" style="display: none;">
+        <div class="confirmation-message" id="confirmation-message">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" style="margin-bottom: 1rem;">
+              <circle cx="30" cy="30" r="30" fill="#4CAF50"/>
+              <path d="M18 32L27 41L43 23" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h2>Thank you for your booking!</h2>
+            <p>Your escape room session has been reserved.<br>We’ll be in touch soon with more details.</p>
+            <div id="confirmation-details"></div>
+            <a href="index.html" class="back-link">← Back to Home</a>
         </div>
     </div>
 
@@ -594,6 +721,7 @@
                 }
             });
 
+            let preselectGroup = null;
             Object.values(eventGroups).forEach(group => {
                 const eventCard = document.createElement('div');
                 eventCard.className = 'event-card';
@@ -608,6 +736,9 @@
 
                 // Count available time slots
                 const availableSlots = group.timeSlots.length;
+                const slotStatusHtml = availableSlots > 0
+                    ? `<div class="slots-available">${availableSlots} time slot${availableSlots !== 1 ? 's' : ''} available</div>`
+                    : `<div class="slots-unavailable">Sold Out</div>`;
 
                 eventCard.innerHTML = `
                     <div class="event-info">
@@ -616,22 +747,37 @@
                             <p><strong>Date:</strong> ${date}</p>
                             <p><strong>Location:</strong> ${group.event.location || 'TBD'}</p>
                         </div>
-                        <div class="slots-available">
-                            ${availableSlots} time slot${availableSlots !== 1 ? 's' : ''} available
-                        </div>
+                        ${slotStatusHtml}
                     </div>
                 `;
 
                 eventCard.addEventListener('click', () => selectEvent(group));
                 container.appendChild(eventCard);
+
+                if (eventId && group.event.id === eventId) {
+                    preselectGroup = group;
+                }
             });
+
+            if (preselectGroup) {
+                selectEvent(preselectGroup);
+            }
         }
 
         function selectEvent(eventGroup) {
             // Remove previous selection
             document.querySelectorAll('.event-card').forEach(card => {
                 card.classList.remove('selected');
+                // Collapse unselected cards
+                if (card.dataset.eventKey !== `${eventGroup.event.summary}-${new Date(eventGroup.event.start.dateTime || eventGroup.event.start.date).toDateString()}`) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = ''; // Show selected
+                }
             });
+
+            // Show the change event bar
+            document.getElementById('change-event-bar').style.display = 'block';
 
             // Select new event
             const eventKey = `${eventGroup.event.summary}-${new Date(eventGroup.event.start.dateTime || eventGroup.event.start.date).toDateString()}`;
@@ -866,7 +1012,8 @@
                     event: selectedEvent.event,
                     timeSlot: selectedTimeSlot,
                     peopleCount: formData.get('people-count'),
-                    contactName: formData.get('contact-name'),
+                    contactFirstName: formData.get('contact-first-name'),
+                    contactLastName: formData.get('contact-last-name'),
                     contactEmail: formData.get('contact-email'),
                     contactPhone: formData.get('contact-phone'),
                     specialRequests: formData.get('special-requests')
@@ -874,17 +1021,17 @@
 
                 // Compose description for calendar event
                 const description = `
-            Booking for: ${bookingData.event.summary}
-            Name: ${bookingData.contactName}
-            Email: ${bookingData.contactEmail}
-            Phone: ${bookingData.contactPhone}
-            People: ${bookingData.peopleCount}
-            Special Requests: ${bookingData.specialRequests || 'None'}
+                    Booking for: ${bookingData.event.summary}
+                    Name: ${bookingData.contactFirstName} ${bookingData.contactLastName}
+                    Email: ${bookingData.contactEmail}
+                    Phone: ${bookingData.contactPhone}
+                    People: ${bookingData.peopleCount}
+                    Special Requests: ${bookingData.specialRequests || 'None'}
                 `.trim();
 
                 // Prepare event data for Google Calendar
                 const calendarEvent = {
-                    summary: `Booking: ${bookingData.event.summary}`,
+                    summary: `${bookingData.contactLastName} Group`,
                     description,
                     start: { dateTime: bookingData.timeSlot.start.dateTime },
                     end: { dateTime: bookingData.timeSlot.end.dateTime },
@@ -902,18 +1049,31 @@
                     });
 
                     if (response.ok) {
-                        alert('Booking submitted and added to the calendar!');
-                        // Reset form and state as before...
-                        form.reset();
-                        peopleCount = 2;
-                        setupPeopleCounter();
-                        selectedEvent = null;
-                        selectedTimeSlot = null;
+                        // Hide form and show confirmation
                         document.getElementById('booking-form').classList.remove('active');
                         document.getElementById('time-slot-selection').classList.remove('active');
                         document.querySelectorAll('.event-card').forEach(card => card.classList.remove('selected'));
                         updateStepIndicator(1);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // Build booking details
+                        const detailsHtml = `
+                            <div style="margin: 1.5rem auto; text-align: left; max-width: 400px;">
+                                <h3 style="margin-bottom: 0.5rem;">Booking Details</h3>
+                                <p><strong>Event:</strong> ${bookingData.event.summary}</p>
+                                <p><strong>Date:</strong> ${new Date(bookingData.timeSlot.start.dateTime).toLocaleDateString()}<br>
+                                <strong>Time:</strong> ${new Date(bookingData.timeSlot.start.dateTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })} - ${new Date(bookingData.timeSlot.end.dateTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                                <p><strong>Name:</strong> ${bookingData.contactFirstName} ${bookingData.contactLastName}</p>
+                                <p><strong>Email:</strong> ${bookingData.contactEmail}</p>
+                                <p><strong>Phone:</strong> ${bookingData.contactPhone}</p>
+                                <p><strong>People:</strong> ${bookingData.peopleCount}</p>
+                                ${bookingData.specialRequests ? `<p><strong>Special Requests:</strong> ${bookingData.specialRequests}</p>` : ''}
+                            </div>
+                        `;
+                        document.getElementById('confirmation-details').innerHTML = detailsHtml;
+
+                        // Show confirmation message
+                        document.getElementById('confirmation-overlay').style.display = 'flex';
                     } else {
                         const error = await response.text();
                         alert('Booking failed: ' + error);
@@ -929,6 +1089,25 @@
             loadEvents();
             setupPeopleCounter();
             setupFormSubmission();
+        });
+        document.getElementById('change-event-btn').addEventListener('click', () => {
+            // Show all event cards again
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.style.display = '';
+                card.classList.remove('selected');
+            });
+            // Hide the change event bar
+            document.getElementById('change-event-bar').style.display = 'none';
+            // Hide time slot selection and booking form
+            document.getElementById('time-slot-selection').classList.remove('active');
+            document.getElementById('booking-form').classList.remove('active');
+            // Reset step indicator
+            updateStepIndicator(1);
+            // Reset selection
+            selectedEvent = null;
+            selectedTimeSlot = null;
+            // Scroll to event selection
+            document.getElementById('event-selection').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         // Handle direct event booking from URL parameters
