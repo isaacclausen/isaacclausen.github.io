@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Your Escape - Escape Inside</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #EBE3CC 0%, #f5f0e1 50%, #EBE3CC 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(43, 43, 43, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header img {
+            height: 40px;
+        }
+
+        .back-link {
+            color: #EBE3CC;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .booking-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .booking-card h1 {
+            color: #2b2b2b;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #2b2b2b, #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .event-selection {
+            margin-bottom: 2rem;
+        }
+
+        .event-card {
+            background: rgba(247, 244, 236, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .event-card.selected {
+            border-color: #2b2b2b;
+            background: rgba(43, 43, 43, 0.1);
+        }
+
+        .event-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+    }
+
+        .event-details h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2b2b2b;
+        }
+
+        .event-details p {
+            margin: 0;
+            color: #666;
+        }
+
+        .slots-available {
+            background: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        .time-slot-selection {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            margin-bottom: 2rem;
+        }
+
+        .time-slot-selection.active {
+            display: block;
+        }
+
+        .time-slots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background: rgba(247, 244, 236, 0.8);
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .time-slot.selected {
+            border-color: #2b2b2b;
+            background: rgba(43, 43, 43, 0.1);
+            color: #2b2b2b;
+            font-weight: bold;
+        }
+
+        .time-slot.unavailable {
+            background: rgba(200, 200, 200, 0.5);
+            color: #999;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+
+        .time-slot.unavailable:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .time-slot-time {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .time-slot-spots {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .time-slot.selected .time-slot-spots {
+            color: #2b2b2b;
+        }
+
+        .booking-form {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .booking-form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2b2b2b;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2b2b2b;
+        }
+
+        .people-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .people-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .counter-btn {
+            background: #2b2b2b;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counter-btn:hover {
+            background: #444;
+        }
+
+        .counter-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .people-count {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #2b2b2b, #444);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .step.active {
+            color: #2b2b2b;
+        }
+
+        .step.completed {
+            color: #4CAF50;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .step.active .step-number {
+            background: #2b2b2b;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-connector {
+            width: 40px;
+            height: 2px;
+            background: #ddd;
+        }
+
+        .step.completed + .step-connector {
+            background: #4CAF50;
+        }
+
+        @media (max-width: 600px) {
+            .event-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .people-selector {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .time-slots-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <img src="Escape Inside Logo Light No Tagline.svg" alt="Escape Inside Logo" />
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="booking-card">
+            <h1>Book Your Escape Adventure</h1>
+            
+            <div class="step-indicator">
+                <div class="step active" id="step-1">
+                    <div class="step-number">1</div>
+                    <span>Select Event</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" id="step-2">
+                    <div class="step-number">2</div>
+                    <span>Choose Time</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" id="step-3">
+                    <div class="step-number">3</div>
+                    <span>Book Details</span>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                Loading available events...
+            </div>
+
+            <div class="event-selection" id="event-selection" style="display: none;">
+                <h2>Select Your Event</h2>
+                <div id="events-container">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+
+            <div class="time-slot-selection" id="time-slot-selection">
+                <h2>Choose Your Time Slot</h2>
+                <div id="selected-event-summary">
+                    <!-- Selected event summary will show here -->
+                </div>
+                <div class="time-slots-container" id="time-slots-container">
+                    <!-- Time slots will be loaded here -->
+                </div>
+            </div>
+
+            <div class="booking-form" id="booking-form">
+                <h2>Booking Details</h2>
+                <form id="booking-form-element">
+                    <div class="selected-event-info" id="selected-event-info">
+                        <!-- Selected event details will show here -->
+                    </div>
+
+                    <div class="form-group">
+                        <label for="people-count">Number of People</label>
+                        <div class="people-selector">
+                            <div class="people-counter">
+                                <button type="button" class="counter-btn" id="decrease-people">-</button>
+                                <span class="people-count" id="people-display">2</span>
+                                <button type="button" class="counter-btn" id="increase-people">+</button>
+                            </div>
+                            <span style="color: #666; font-size: 0.9rem;">Maximum 8 people per session</span>
+                        </div>
+                        <input type="hidden" id="people-count" name="people-count" value="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-name">Contact Name *</label>
+                        <input type="text" id="contact-name" name="contact-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-email">Email Address *</label>
+                        <input type="email" id="contact-email" name="contact-email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-phone">Phone Number *</label>
+                        <input type="tel" id="contact-phone" name="contact-phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="special-requests">Special Requests or Notes</label>
+                        <textarea id="special-requests" name="special-requests" rows="3" placeholder="Any special accommodations, dietary restrictions, or questions..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Complete Booking</button>
+                </form>
+            </div>
+
+            <div class="no-events" id="no-events" style="display: none;">
+                <h2>No Events Available</h2>
+                <p>We don't have any public events scheduled at the moment. Please check back soon or contact us about private bookings!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedEvent = null;
+        let selectedTimeSlot = null;
+        let peopleCount = 2;
+        let allEvents = [];
+
+        // Load events from the calendar
+        function loadEvents() {
+            const publicCalendarId = '9ccddeec24fa50c0880827217c1897b6d15b492d8d1519973aa7db19b0096992@group.calendar.google.com'; // Public calendar ID
+            const availabilityCalendarId = '8e6f98a0453e37a212e5a5c95cf3b03c48e751c678874a5d695975fb7037cdb3@group.calendar.google.com'; // Availability calendar ID
+            const timeMin = new Date().toISOString(); // Current time
+            const timeMax = new Date(new Date().setDate(new Date().getDate() + 365)).toISOString(); // 365 days from now
+
+            const publicCalendarUrl = `https://escape-calendar-proxy.isaacclausen.workers.dev?calendarId=${publicCalendarId}&timeMin=${timeMin}&timeMax=${timeMax}`;
+            const availabilityCalendarUrl = `https://escape-calendar-proxy.isaacclausen.workers.dev?calendarId=${availabilityCalendarId}&timeMin=${timeMin}&timeMax=${timeMax}`;
+
+            Promise.all([fetch(publicCalendarUrl), fetch(availabilityCalendarUrl)])
+                .then(responses => Promise.all(responses.map(res => res.json())))
+                .then(([publicData, availabilityData]) => {
+                    const publicEvents = publicData.items || [];
+                    const availabilityEvents = availabilityData.items || [];
+
+                    allEvents = publicEvents;
+                    allAvailabilityEvents = availabilityEvents;
+                    console.log('Availability Events:', allAvailabilityEvents);
+
+                    const loading = document.getElementById('loading');
+                    const eventSelection = document.getElementById('event-selection');
+                    const noEvents = document.getElementById('no-events');
+                    
+                    loading.style.display = 'none';
+                    
+                    if (allEvents.length === 0) {
+                        noEvents.style.display = 'block';
+                        return;
+                    }
+                    
+                    eventSelection.style.display = 'block';
+                    renderEvents(allEvents);
+                })
+                .catch(err => {
+                    console.error('Error loading events:', err);
+                    document.getElementById('loading').textContent = 'Error loading events. Please try again later.';
+                });
+        }
+
+        function renderEvents(events) {
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+
+            // Group events by date and title
+            const eventGroups = {};
+            events.forEach((event, index) => {
+                const date = new Date(event.start.dateTime || event.start.date).toDateString();
+                const key = `${event.summary}-${date}`;
+                
+                if (!eventGroups[key]) {
+                    eventGroups[key] = {
+                        event,
+                        timeSlots: [],
+                        originalIndex: index
+                    };
+                }
+
+                // Calculate time slots for the event
+                const startTime = new Date(event.start.dateTime || event.start.date);
+                const endTime = new Date(event.end?.dateTime || event.end?.date || startTime.getTime() + 4 * 60 * 60 * 1000); // Default to 4 hours if no end time
+                const timeSlotDuration = 90 * 60 * 1000; // 1.5 hours in milliseconds
+
+                let currentTime = startTime;
+                while (currentTime < endTime) {
+                    const nextTime = new Date(currentTime.getTime() + timeSlotDuration);
+
+                    // Check if the time slot is available
+                    const isSlotOccupiedByEvent = allEvents.some(e => {
+                        if (e.id === event.id) return false; // Exclude the current event
+                        const eStart = new Date(e.start.dateTime || e.start.date).getTime();
+                        const eEnd = new Date(e.end.dateTime || e.end.date).getTime();
+                        return currentTime.getTime() < eEnd && nextTime.getTime() > eStart;
+                    });
+
+                    const isSlotUnavailable = allAvailabilityEvents.some(e => {
+                        const eStart = new Date(e.start.dateTime || e.start.date).getTime();
+                        const eEnd = new Date(e.end.dateTime || e.end.date).getTime();
+                        return currentTime.getTime() < eEnd && nextTime.getTime() > eStart;
+                    });
+
+                    const isSlotAvailable = !isSlotOccupiedByEvent && !isSlotUnavailable;
+
+                    if (isSlotAvailable) {
+                        eventGroups[key].timeSlots.push({
+                            start: { dateTime: currentTime.toISOString() },
+                            end: { dateTime: nextTime.toISOString() },
+                            originalIndex: index
+                        });
+                    }
+
+                    currentTime = nextTime;
+                }
+            });
+
+            Object.values(eventGroups).forEach(group => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                eventCard.dataset.eventKey = `${group.event.summary}-${new Date(group.event.start.dateTime || group.event.start.date).toDateString()}`;
+
+                const rawDate = new Date(group.event.start.dateTime || group.event.start.date);
+                const date = rawDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Count available time slots
+                const availableSlots = group.timeSlots.length;
+
+                eventCard.innerHTML = `
+                    <div class="event-info">
+                        <div class="event-details">
+                            <h3>${group.event.summary || 'Escape Room Event'}</h3>
+                            <p><strong>Date:</strong> ${date}</p>
+                            <p><strong>Location:</strong> ${group.event.location || 'TBD'}</p>
+                        </div>
+                        <div class="slots-available">
+                            ${availableSlots} time slot${availableSlots !== 1 ? 's' : ''} available
+                        </div>
+                    </div>
+                `;
+
+                eventCard.addEventListener('click', () => selectEvent(group));
+                container.appendChild(eventCard);
+            });
+        }
+
+        function selectEvent(eventGroup) {
+            // Remove previous selection
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Select new event
+            const eventKey = `${eventGroup.event.summary}-${new Date(eventGroup.event.start.dateTime || eventGroup.event.start.date).toDateString()}`;
+            document.querySelector(`[data-event-key="${eventKey}"]`).classList.add('selected');
+            
+            selectedEvent = eventGroup;
+            selectedTimeSlot = null;
+
+            // Update step indicator
+            updateStepIndicator(2);
+
+            // Show time slot selection
+            showTimeSlotSelection();
+
+            // Scroll to time slots
+            document.getElementById('time-slot-selection').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        function showTimeSlotSelection() {
+            const timeSlotSelection = document.getElementById('time-slot-selection');
+            const selectedEventSummary = document.getElementById('selected-event-summary');
+            
+            // Update event summary
+            const rawDate = new Date(selectedEvent.event.start.dateTime || selectedEvent.event.start.date);
+            const date = rawDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            selectedEventSummary.innerHTML = `
+                <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0 0 0.5rem 0; color: #2b2b2b;">Selected Event</h3>
+                    <p style="margin: 0;"><strong>${selectedEvent.event.summary || 'Escape Room Event'}</strong></p>
+                    <p style="margin: 0.25rem 0 0 0; color: #666;">${date} • ${selectedEvent.event.location || 'TBD'}</p>
+                </div>
+            `;
+
+            // Render time slots
+            renderTimeSlots();
+            
+            timeSlotSelection.classList.add('active');
+        }
+
+        function renderTimeSlots() {
+    const container = document.getElementById('time-slots-container');
+    container.innerHTML = '';
+
+    if (!selectedEvent) {
+        console.error('No event selected.');
+        return;
+    }
+
+    // Use the selected event's date and time range
+    const eventStart = new Date(selectedEvent.event.start.dateTime || selectedEvent.event.start.date).getTime();
+    const eventEnd = new Date(selectedEvent.event.end?.dateTime || selectedEvent.event.end?.date || eventStart + 4 * 60 * 60 * 1000).getTime(); // Default to 4 hours if no end time
+    const timeSlotDuration = 90 * 60 * 1000; // 1.5 hours in milliseconds
+
+    let slotStartTime = eventStart;
+
+    while (slotStartTime < eventEnd) {
+        const slotEndTime = slotStartTime + timeSlotDuration;
+
+        // Check if the slot overlaps with any public event (excluding the selected event)
+        const isSlotOccupiedByEvent = allEvents.some(event => {
+            if (event.id === selectedEvent.event.id) {
+                return false; // Exclude the selected event
+            }
+
+            const eventStart = new Date(event.start.dateTime || event.start.date).getTime();
+            const eventEnd = new Date(event.end.dateTime || event.end.date).getTime();
+
+            return slotStartTime < eventEnd && slotEndTime > eventStart;
+        });
+
+        // Check if the slot is marked unavailable in the availability calendar
+        const isSlotUnavailable = allAvailabilityEvents.some(event => {
+            const eventStart = new Date(event.start.dateTime || event.start.date).getTime();
+            const eventEnd = new Date(event.end.dateTime || event.end.date).getTime();
+
+            return slotStartTime < eventEnd && slotEndTime > eventStart;
+        });
+
+        // Determine if the slot is available
+        const isSlotAvailable = !isSlotOccupiedByEvent && !isSlotUnavailable;
+
+        const timeSlot = document.createElement('div');
+        timeSlot.className = `time-slot ${isSlotAvailable ? '' : 'unavailable'}`;
+        timeSlot.dataset.slotIndex = slotStartTime;
+
+        // Display only the first hour of the slot
+        const startTime = new Date(slotStartTime);
+        const displayedEndTime = new Date(slotStartTime + 60 * 60 * 1000); // 1 hour after the start time
+
+        const timeString = `${startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${displayedEndTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+
+        timeSlot.innerHTML = `
+            <div class="time-slot-time">${timeString}</div>
+        `;
+
+        if (isSlotAvailable) {
+            // Capture the current slot's times in local variables
+            const slotStart = slotStartTime;
+            const slotEnd = slotStartTime + 60 * 60 * 1000; // 1 hour after start
+
+            timeSlot.addEventListener('click', () => selectTimeSlot(
+                { start: { dateTime: new Date(slotStart).toISOString() }, end: { dateTime: new Date(slotEnd).toISOString() } },
+                null,
+                timeSlot
+            ));
+        }
+
+        container.appendChild(timeSlot);
+        slotStartTime = slotEndTime;
+    }
+}
+
+        function selectTimeSlot(slot, index, slotElement) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(element => {
+                element.classList.remove('selected');
+            });
+
+            // Select new time slot
+            slotElement.classList.add('selected');
+            selectedTimeSlot = { ...slot, slotIndex: index };
+
+            // Update step indicator
+            updateStepIndicator(3);
+
+            // Show booking form
+            const bookingForm = document.getElementById('booking-form');
+            bookingForm.classList.add('active');
+
+            // Update selected event info in booking form
+            updateSelectedEventInfo();
+            console.log('Selected Time Slot:', selectedTimeSlot);
+            // Scroll to form
+            setTimeout(() => {
+                bookingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+
+        function updateSelectedEventInfo() {
+            if (!selectedEvent || !selectedTimeSlot) return;
+
+            const container = document.getElementById('selected-event-info');
+            const rawDate = new Date(selectedTimeSlot.start.dateTime || selectedTimeSlot.start.date);
+            const date = rawDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const startTime = new Date(selectedTimeSlot.start.dateTime || selectedTimeSlot.start.date);
+            const endTime = new Date(selectedTimeSlot.end?.dateTime || selectedTimeSlot.end?.date || startTime.getTime() + 60*60*1000);
+            
+            const timeString = selectedTimeSlot.start.dateTime ? 
+                `${startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${endTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}` :
+                'All Day';
+
+            container.innerHTML = `
+                <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0 0 0.5rem 0; color: #2b2b2b;">Selected Booking</h3>
+                    <p style="margin: 0;"><strong>${selectedEvent.event.summary || 'Escape Room Event'}</strong></p>
+                    <p style="margin: 0.25rem 0 0 0; color: #666;">${date} at ${timeString}</p>
+                    <p style="margin: 0.25rem 0 0 0; color: #666;">Location: ${selectedEvent.event.location || 'TBD'}</p>
+                </div>
+            `;
+        }
+
+        function updateStepIndicator(activeStep) {
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step-${i}`);
+                step.classList.remove('active', 'completed');
+                
+                if (i < activeStep) {
+                    step.classList.add('completed');
+                } else if (i === activeStep) {
+                    step.classList.add('active');
+                }
+            }
+        }
+
+        // People counter functionality
+        function setupPeopleCounter() {
+            const decreaseBtn = document.getElementById('decrease-people');
+            const increaseBtn = document.getElementById('increase-people');
+            const display = document.getElementById('people-display');
+            const hiddenInput = document.getElementById('people-count');
+
+            function updateDisplay() {
+                display.textContent = peopleCount;
+                hiddenInput.value = peopleCount;
+                decreaseBtn.disabled = peopleCount <= 1;
+                increaseBtn.disabled = peopleCount >= 8;
+            }
+
+            decreaseBtn.addEventListener('click', () => {
+                if (peopleCount > 1) {
+                    peopleCount--;
+                    updateDisplay();
+                }
+            });
+
+            increaseBtn.addEventListener('click', () => {
+                if (peopleCount < 8) {
+                    peopleCount++;
+                    updateDisplay();
+                }
+            });
+
+            updateDisplay();
+        }
+
+        // Form submission
+        function setupFormSubmission() {
+            const form = document.getElementById('booking-form-element');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                if (!selectedEvent || !selectedTimeSlot) {
+                    alert('Please select an event and time slot first.');
+                    return;
+                }
+
+                // Collect form data
+                const formData = new FormData(form);
+                const bookingData = {
+                    event: selectedEvent.event,
+                    timeSlot: selectedTimeSlot,
+                    peopleCount: formData.get('people-count'),
+                    contactName: formData.get('contact-name'),
+                    contactEmail: formData.get('contact-email'),
+                    contactPhone: formData.get('contact-phone'),
+                    specialRequests: formData.get('special-requests')
+                };
+
+                // Compose description for calendar event
+                const description = `
+            Booking for: ${bookingData.event.summary}
+            Name: ${bookingData.contactName}
+            Email: ${bookingData.contactEmail}
+            Phone: ${bookingData.contactPhone}
+            People: ${bookingData.peopleCount}
+            Special Requests: ${bookingData.specialRequests || 'None'}
+                `.trim();
+
+                // Prepare event data for Google Calendar
+                const calendarEvent = {
+                    summary: `Booking: ${bookingData.event.summary}`,
+                    description,
+                    start: { dateTime: bookingData.timeSlot.start.dateTime },
+                    end: { dateTime: bookingData.timeSlot.end.dateTime },
+                };
+
+                // Send to Worker
+                try {
+                    const response = await fetch('https://escape-calendar-proxy.isaacclausen.workers.dev/book', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            calendarId: '8e6f98a0453e37a212e5a5c95cf3b03c48e751c678874a5d695975fb7037cdb3@group.calendar.google.com', // Availability calendar
+                            event: calendarEvent
+                        })
+                    });
+
+                    if (response.ok) {
+                        alert('Booking submitted and added to the calendar!');
+                        // Reset form and state as before...
+                        form.reset();
+                        peopleCount = 2;
+                        setupPeopleCounter();
+                        selectedEvent = null;
+                        selectedTimeSlot = null;
+                        document.getElementById('booking-form').classList.remove('active');
+                        document.getElementById('time-slot-selection').classList.remove('active');
+                        document.querySelectorAll('.event-card').forEach(card => card.classList.remove('selected'));
+                        updateStepIndicator(1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        const error = await response.text();
+                        alert('Booking failed: ' + error);
+                    }
+                } catch (err) {
+                    alert('Booking failed: ' + err.message);
+                }
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEvents();
+            setupPeopleCounter();
+            setupFormSubmission();
+        });
+
+        // Handle direct event booking from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        if (eventId) {
+            console.log('Pre-selecting event:', eventId);
+        }
+    </script>
+</body>
+</html>
