@@ -92,4 +92,178 @@
         font-size: 2.2rem;
         margin-bottom: 1rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        background: linear
+        background: linear-gradient(45deg, #2b2b2b, #555);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .content p {
+        color: #444;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .events-table {
+        width: 100%;
+        max-width: 900px;
+        margin: 2rem auto;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .events-table th, .events-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .events-table th {
+        background-color: #f7f4ec;
+        font-weight: bold;
+      }
+
+      .events-table tbody tr:hover {
+        background-color: #f0ece1;
+      }
+
+      .book-link {
+        background-color: #2b2b2b;
+        color: #EBE3CC;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .book-link:hover {
+        background-color: #444;
+      }
+
+      /* 📸 Image Gallery */
+      .image-gallery {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1.5rem auto 2rem auto;
+        padding: 0 2rem;
+        max-width: 1200px;
+        flex-wrap: wrap;
+      }
+
+      .image-gallery img {
+        flex: 1;
+        min-width: 250px;
+        max-width: 350px;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .image-gallery img:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      }
+
+    </style>
+  </head>
+  <body>
+    <!-- 🖼️ Banner with overlay -->
+    <div class="banner-container">
+      <img src="Exterior.png" alt="Escape Room Exterior" class="banner" />
+      <div class="overlay-nav">
+        <img src="Escape Inside Logo Light No Tagline.svg" alt="Escape Inside Logo Light" />
+        <div class="nav-links">
+          <a href="booking.html">Book Now</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🎯 Main Content -->
+    <img src="Escape Inside Logo.svg" alt="Escape Inside Logo" class="logo" />
+    <div class="content">
+      <h1>Let the adventure come to you!</h1>
+      <p>Escape inside is a work in progress mobile escape room with the goal of bringing escape room adventures to your event. Check here for upcoming events that we will be attending, or send us a message if you are interested in having Escape Inside at your next gathering!</p>
+    </div>
+    
+    <!-- 📸 Image Gallery -->
+    <div class="image-gallery">
+      <img src="Exterior1.jpg" alt="Escape Inside Mobile Unit 1" />
+      <img src="Exterior2.jpg" alt="Escape Inside Mobile Unit 2" />
+      <img src="Exterior3.jpg" alt="Escape Inside Mobile Unit 3" />
+    </div>
+    
+    <div class="content events-section">
+      <h2>Upcoming Public Events</h2>
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Event Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="events-body">
+          <!-- Events will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+    
+    
+    
+    <script>
+    
+      fetch(`https://escape-calendar-proxy.isaacclausen.workers.dev?calendarId=9ccddeec24fa50c0880827217c1897b6d15b492d8d1519973aa7db19b0096992@group.calendar.google.com`)
+    .then(res => res.json())
+    .then(data => {
+      const events = data.items || [];
+      const section = document.querySelector('.events-section');
+      const tableBody = document.getElementById('events-body');
+
+      if (events.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      events.forEach(event => {
+        const row = document.createElement('tr');
+        const rawDate = new Date(event.start.dateTime || event.start.date);
+        const date = rawDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const location = event.location || 'TBD';
+        const name = event.summary || 'Untitled Event';
+        const eventId = encodeURIComponent(event.id);
+
+        row.innerHTML = `
+          <td>${date}</td>
+          <td>${location}</td>
+          <td>${name}</td>
+          <td><a href="booking.html?event=${eventId}" class="book-link">Book Now</a></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Error loading calendar events:', err);
+      document.querySelector('.events-section').style.display = 'none';
+    });
+</script>
+    
+  </body>
+</html>
