@@ -69,6 +69,40 @@
             background-clip: text;
         }
 
+        .event-selection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: .7rem;
+        }
+
+        .event-selection-header h2 {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+        .change-event-btn {
+            background: #eee;
+            border: none;
+            color: #2b2b2b;
+            font-weight: bold;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .change-event-btn:hover {
+            background: #ddd;
+        }
+        @media (max-width: 600px) {
+            .event-selection-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
         .event-selection {
             margin-bottom: 2rem;
         }
@@ -527,14 +561,14 @@
             </div>
 
             <div class="event-selection" id="event-selection" style="display: none;">
-                <h2>Select Your Event</h2>
-
-                <div id="change-event-bar" style="display:none; margin-bottom:1rem; text-align:right;">
-                    <button id="change-event-btn" style="background:#eee; border:none; color:#2b2b2b; font-weight:bold; padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer;">
-                        ← Change Event
-                    </button>
+                <div class="event-selection-header">
+                    <h2>Select Your Event</h2>
+                    <div id="change-event-bar" style="display:none;">
+                        <button id="change-event-btn" class="change-event-btn">
+                            ← Change Event
+                        </button>
+                    </div>
                 </div>
-
                 <div id="events-container">
                     <!-- Events will be loaded here -->
                 </div>
@@ -1044,7 +1078,13 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             calendarId: '8e6f98a0453e37a212e5a5c95cf3b03c48e751c678874a5d695975fb7037cdb3@group.calendar.google.com', // Availability calendar
-                            event: calendarEvent
+                            event: calendarEvent,
+                            contactFirstName: bookingData.contactFirstName,
+                            contactLastName: bookingData.contactLastName,
+                            contactEmail: bookingData.contactEmail,
+                            contactPhone: bookingData.contactPhone,
+                            peopleCount: bookingData.peopleCount,
+                            specialRequests: bookingData.specialRequests
                         })
                     });
 
