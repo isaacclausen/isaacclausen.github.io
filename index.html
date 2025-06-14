@@ -93,10 +93,15 @@
 
         /* Projects Section */
         .projects {
-            background: white;
-            padding: 3rem 0;
-            margin-top: 2rem;
+            background: #f4f7fc;
+            padding: 3rem 1% 1%;
+            margin-top: 3rem;
             border-radius: 2rem 2rem 0 0;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0px 0px 44px -8px #5C686D, 
+                        inset 0px 0px 13px 2px #6d7b85;
         }
 
         .section-title {
@@ -115,17 +120,17 @@
         }
 
         .project-card {
-            background: white;
+            background: #f5f6fc;
             border-radius: 1rem;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 57px rgba(58,76,102,.07),0 -1.5px 4.5px rgba(191,197,202,.65) inset;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.6s;
             border: 1px solid #f0f0f0;
         }
 
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+       .project-card:hover {
+            background: #fff;
+            transform: translateY(-10px) scale(1.03);
         }
 
         .project-image {
@@ -141,8 +146,8 @@
         }
 
         .project-logo {
-            max-width: 850%;
-            max-height: 70%;
+            max-width: 95%;
+            max-height: 95%;
             display: block;
             margin: 0 auto;
             padding: 10px;
@@ -196,6 +201,8 @@
 
         /* About Section */
         .about {
+            position: relative;
+            top: -13px;
             background: #f8f9fa;
             padding: 4rem 0;
             text-align: center;
@@ -304,15 +311,18 @@
             margin-bottom: 1rem;
         }
 
-        .escape-room { background: linear-gradient(45deg, #fcdfa3, #ffcb5b); }
+        .escape-room { background: linear-gradient(45deg, #1e271e, #374130); }
         .media-services { background: linear-gradient(45deg, #0c0123, #200a7a); }
+        .tech-help { background: linear-gradient(45deg, #768cc1, #5d6d91); }
         .piano-roll { background: linear-gradient(45deg, #dc2626, #f59e0b); }
     </style>
 </head>
 <body>
     <header>
         <nav class="container">
-            <a href="#" class="logo">Isaac Clausen</a>
+            <a href="#" class="logo">
+                <img src="Inside Logo.svg" alt="Inside Logo" style="height: 2.2rem; display: block;">
+            </a>
             <ul class="nav-links">
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#about">About</a></li>
@@ -325,15 +335,15 @@
 
     <section class="projects" id="projects">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+
             <div class="projects-grid" id="projectsGrid">
                 <div class="project-card">
                     <div class="project-image escape-room">
-                         <img src="escape.svg" alt="Escape Inside" class="project-logo" style="object-fit: contain;">
+                         <img src="Escape Inside Logo White.svg" alt="Escape Inside" class="project-logo" style="object-fit: contain;">
                     </div>
                     <div class="project-content">
                         <h3 class="project-title">Escape Inside</h3>
-                        <p class="project-description">A national park themed mobile escape room experience that brings adventure and puzzles directly to your location. An immersive experience combining nature themes with challenging escape room mechanics.</p>
+                        <p class="project-description">A mobile escape room experience that brings adventure and puzzles directly to your event. Have us come to your next event, or find us at our next location.</p>
                         <a href="https://escape.inside.onl" class="project-link">
                             Explore → 
                         </a>
@@ -346,7 +356,20 @@
                     </div>
                     <div class="project-content">
                         <h3 class="project-title">Inside Scoop Media Services</h3>
-                        <p class="project-description">Professional media production services offering comprehensive solutions for video, photography, and digital content creation. From concept to completion, bringing your vision to life.</p>
+                        <p class="project-description">Professional media production services offering comprehensive solutions for video, graphics, and digital content creation. From concept to completion, bringing your vision to life.</p>
+                        <a href="#" class="project-link">
+                            Learn More →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image tech-help">
+                        <img src="Inside Guide Logo White.svg" alt="Inside Guide Tech Help" class="project-logo" style="object-fit: contain;">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Inside Guide Tech Help</h3>
+                        <p class="project-description">Expert in-home and remote technical support and guidance to help you stay independent, safe and connected. We're here to help you feel more comfortable with your technology.</p>
                         <a href="#" class="project-link">
                             Learn More →
                         </a>
@@ -361,6 +384,19 @@
                         <h3 class="project-title">Player Piano Roll Laser Cutter</h3>
                         <p class="project-description">A custom-built laser cutting system that creates new player piano rolls, allowing modern songs to be played on vintage player pianos. Bridging the gap between historical instruments and contemporary music.</p>
                         <a href="https://makezine.com/article/craft/music/the-quest-to-make-player-piano-rolls-using-lasers/" class="project-link">
+                            Discover →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image piano-roll">
+                        <img src="photo booth.png" alt="Photo Booth" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Photo Booth</h3>
+                        <p class="project-description">A homemade photo booth that captures memories with fun props and backdrops. Perfect for events, parties, and gatherings.</p>
+                        <a href="#" class="project-link">
                             Discover →
                         </a>
                     </div>
@@ -422,7 +458,7 @@ I'm passionate about problem-solving and finding efficient solutions. Whether it
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transform = ''; // <-- Remove inline transform so CSS hover works!
                 }
             });
         }, observerOptions);
@@ -431,19 +467,7 @@ I'm passionate about problem-solving and finding efficient solutions. Whether it
         document.querySelectorAll('.project-card').forEach(card => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
-        });
-
-        // Add some interactive hover effects
-        document.querySelectorAll('.project-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
         });
     </script>
 </body>
