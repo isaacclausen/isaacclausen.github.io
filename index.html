@@ -94,7 +94,7 @@
         /* Projects Section */
         .projects {
             background: white;
-            padding: 5rem 0;
+            padding: 3rem 0;
             margin-top: 2rem;
             border-radius: 2rem 2rem 0 0;
         }
@@ -103,7 +103,7 @@
             text-align: center;
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
             color: #333;
         }
 
@@ -140,6 +140,14 @@
             overflow: hidden;
         }
 
+        .project-logo {
+            max-width: 850%;
+            max-height: 70%;
+            display: block;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
         .project-image::before {
             content: '';
             position: absolute;
@@ -148,7 +156,7 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-            animation: shimmer 2s infinite;
+            animation: shimmer 3s infinite;
         }
 
         .project-content {
@@ -296,8 +304,8 @@
             margin-bottom: 1rem;
         }
 
-        .escape-room { background: linear-gradient(45deg, #e4af43, #ecc673); }
-        .media-services { background: linear-gradient(45deg, #1e40af, #3b82f6); }
+        .escape-room { background: linear-gradient(45deg, #fcdfa3, #ffcb5b); }
+        .media-services { background: linear-gradient(45deg, #0c0123, #200a7a); }
         .piano-roll { background: linear-gradient(45deg, #dc2626, #f59e0b); }
     </style>
 </head>
@@ -321,7 +329,7 @@
             <div class="projects-grid" id="projectsGrid">
                 <div class="project-card">
                     <div class="project-image escape-room">
-                        <img src="escape.svg" alt="Escape Inside" style="width: 100%; height: 100%; object-fit: contain;">
+                         <img src="escape.svg" alt="Escape Inside" class="project-logo" style="object-fit: contain;">
                     </div>
                     <div class="project-content">
                         <h3 class="project-title">Escape Inside</h3>
@@ -334,7 +342,7 @@
 
                 <div class="project-card">
                     <div class="project-image media-services">
-                        <div class="project-icon">🎬</div>
+                        <img src="Inside Scoop Logo White.svg" alt="Inside Scoop Media Services" class="project-logo" style="object-fit: contain;">
                     </div>
                     <div class="project-content">
                         <h3 class="project-title">Inside Scoop Media Services</h3>
