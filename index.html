@@ -145,6 +145,16 @@
             overflow: hidden;
         }
 
+        .project-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            z-index: 2;
+            background: radial-gradient(ellipse at center, rgba(59, 45, 5, 0) 60%, rgba(36, 29, 17, 0.226) 100%);
+        }
+
         .project-logo {
             max-width: 95%;
             max-height: 80%;
